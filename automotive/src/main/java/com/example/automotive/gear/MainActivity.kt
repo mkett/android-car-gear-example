@@ -10,6 +10,17 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
+    enum class GEAR(val value: Int) {
+        UNKNOWN(0),
+        NEUTRAL(1),
+        REVERSE(2),
+        PARK(4),
+        DRIVE(8);
+        companion object {
+            infix fun from(value: Int): GEAR = entries.firstOrNull { it.value == value } ?: UNKNOWN
+        }
+    }
+
     /** car object to communicate with car services */
     private lateinit var car : Car
 
@@ -19,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     /** listener to receive car property changes */
     private var carPropertyCallBack = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
-            updateUi(carPropertyValue.value.toString())
+            updateUi(GEAR.from(carPropertyValue.value as Int).name)
         }
         override fun onErrorEvent(propId: Int, zone: Int) { }
     }
